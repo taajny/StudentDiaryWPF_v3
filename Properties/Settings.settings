@@ -1,7 +1,21 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="StudentDiaryWPF.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="dbServerAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">(local)</Value>
+    </Setting>
+    <Setting Name="dbServerName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SQLEXPRESS</Value>
+    </Setting>
+    <Setting Name="dbName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">StudentDiaryWPF</Value>
+    </Setting>
+    <Setting Name="dbUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">studentsAdmin</Value>
+    </Setting>
+    <Setting Name="dbPassWord" Type="System.String" Scope="User">
+      <Value Profile="(Default)">12345</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

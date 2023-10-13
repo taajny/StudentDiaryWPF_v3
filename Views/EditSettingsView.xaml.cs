@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using StudentDiaryWPF.Models.Wrappers;
 using StudentDiaryWPF.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,26 +13,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace StudentDiaryWPF.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Logika interakcji dla klasy EditSettingsView.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class EditSettingsView : MetroWindow
     {
-        public MainWindow()
+        public EditSettingsView(bool canCloseWindow)
         {
             InitializeComponent();
-            DataContext = new MainViewModel();    
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            //var newWind = new AddEditStudentView();
-            //newWind.ShowDialog();
+            DataContext = new EditSettingsViewModel(canCloseWindow);
         }
     }
 }

@@ -15,6 +15,8 @@ using StudentDiaryWPF.Views;
 using StudentDiaryWPF.Models.Wrappers;
 using System.Runtime.Remoting.Contexts;
 using StudentDiaryWPF.Models.Domains;
+using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 
 namespace StudentDiaryWPF.ViewModels
 {
@@ -22,18 +24,44 @@ namespace StudentDiaryWPF.ViewModels
     {
         private Repository _repository = new Repository();
         public MainViewModel()
-        {           
+        {
             AddStudentCommand = new RelayCommand(AddEditStudents);
             EditStudentCommand = new RelayCommand(AddEditStudents, CanEditDeleteStudents);
             DeleteStudentCommand = new AsyncRelayCommand(DeleteStudents, CanEditDeleteStudents);
             RefreshStudentCommand = new RelayCommand(RefreshStudents);
-            RefreshDiary();
-            InitGroups();
+            SettingsCommand = new RelayCommand(EditSettings);
+            LoadedWindowCommand = new RelayCommand(LoadedWindow);
+            LoadedWindow(null);
+            //SettingStr = _repository.CreateConnectionString();
         }
+
+        private bool checkDBConnection()
+        {
+
+            return _repository.TestDbConnection();
+        }
+
         public ICommand RefreshStudentCommand { get; set; }
         public ICommand AddStudentCommand { get; set; }
         public ICommand EditStudentCommand { get; set; }
         public ICommand DeleteStudentCommand { get; set; }
+        public ICommand SettingsCommand { get; set; }
+        public ICommand LoadedWindowCommand { get; set; }
+
+        private string _settingStr;
+
+        public string SettingStr 
+        {
+            get
+            {
+                return _settingStr;
+            }
+            set
+            {
+                _settingStr = value;
+                OnPropertyChanged();
+            }
+        }
 
         private StudentWrapper _selectedStudent;
 
@@ -95,6 +123,17 @@ namespace StudentDiaryWPF.ViewModels
             addEditStudentWindow.Closed += AddEditStudentWindow_Closed;
             addEditStudentWindow.ShowDialog();
         }
+        private void EditSettings(object obj)
+        {
+            var editSettingsWindow = new EditSettingsView(true);
+            editSettingsWindow.Closed += EditSettingsWindow_Closed;
+            editSettingsWindow.ShowDialog();
+        }
+
+        private void EditSettingsWindow_Closed(object sender, EventArgs e)
+        {
+            
+        }
 
         private void AddEditStudentWindow_Closed(object sender, EventArgs e)
         {
@@ -125,6 +164,29 @@ namespace StudentDiaryWPF.ViewModels
         private void RefreshDiary()
         {
             Students = new ObservableCollection<StudentWrapper>(_repository.GetStudents(SelectedGroupId));
+        }
+        private async void LoadedWindow(object obj)
+        {
+            if (!checkDBConnection())
+            {
+                var metroWindow = Application.Current.MainWindow as MetroWindow;
+                var dialog = await metroWindow.ShowMessageAsync("Bląd połączenia z bazą danych", "Nie można połączyć się z bazą danych. Czy chcesz zmienić ustawienia?", MessageDialogStyle.AffirmativeAndNegative);
+
+                if (dialog == MessageDialogResult.Negative)
+                {
+                    Application.Current.Shutdown();
+                }
+                else
+                {
+                    var settingsWindow = new EditSettingsView(false);
+                    settingsWindow.ShowDialog();
+                }
+            }
+            else
+            {
+                RefreshDiary();
+                InitGroups();
+            }
         }
 
     }

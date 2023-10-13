@@ -33,10 +33,10 @@
         <TextBox Visibility="{Binding IsUpdate, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding Student.Id}" IsReadOnly="True" Grid.Column="1" Margin="5"/>
 
         <Label Grid.Row="1" Content="Imię:" Margin="5"/>
-        <TextBox Text="{Binding Student.FirstName}" Grid.Row="1" Grid.Column="1" Margin="5"/>
+        <TextBox Text="{Binding Student.FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Grid.Row="1" Grid.Column="1" Margin="5"/>
 
         <Label Grid.Row="2" Content="Nazwisko:" Margin="5"/>
-        <TextBox Text="{Binding Student.LastName}" Grid.Row="2" Grid.Column="1" Margin="5"/>
+        <TextBox Text="{Binding Student.LastName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" Grid.Row="2" Grid.Column="1" Margin="5"/>
 
         <Label Grid.Row="3" Content="Matematyka:" Margin="5"/>
         <TextBox Text="{Binding Student.Math}" Grid.Row="3" Grid.Column="1" Margin="5"/>
@@ -56,7 +56,7 @@
         <Label Grid.Row="8" Content="Klasa:" Margin="5"/>
         <ComboBox
             ItemsSource="{Binding Groups}"
-            SelectedValue="{Binding Student.Group.Id}"
+            SelectedValue="{Binding Student.SelectedGroupId, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
             DisplayMemberPath="Name"
             SelectedValuePath="Id"
             Grid.Row="8"
@@ -90,7 +90,8 @@
                 Content="Zatwierdź"
                 Margin="5"
                 Height="25"
-                Width="100"
+                Width="100" 
+                IsEnabled="{Binding Student.IsValid}"
                 />
         </StackPanel>
     </Grid>

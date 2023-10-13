@@ -9,14 +9,34 @@ using System.Data.Entity;
 using StudentDiaryWPF.Models.Converters;
 using StudentDiaryWPF.Models;
 using System.Runtime.Remoting.Contexts;
+using StudentDiaryWPF.Properties;
 
 namespace StudentDiaryWPF
 {
     public class Repository
     {
+        public bool TestDbConnection()
+        {
+            try
+            {
+                using (var testContext = new ApplicationDbContext(CreateConnectionString())) 
+                { 
+                    testContext.Database.Connection.Open();
+                    testContext.Database.Connection.Close();
+                }
+                return true;
+            }
+            catch (Exception ex) 
+            {
+
+                return false;
+            }
+            
+        }
         public List<Group> GetGroups()
         {
-            using (var context = new ApplicationDbContext())
+            
+            using (var context = new ApplicationDbContext(CreateConnectionString()))
             {
                 return context.Groups.ToList();
             }
@@ -24,7 +44,7 @@ namespace StudentDiaryWPF
 
         public List<StudentWrapper> GetStudents(int groupId)
         {
-            using (var context = new ApplicationDbContext())
+            using (var context = new ApplicationDbContext(CreateConnectionString()))
             {
                 var students = context.Students.Include(x => x.Group).Include(x => x.Ratings).AsQueryable();
                 if (groupId != 0)
@@ -37,7 +57,7 @@ namespace StudentDiaryWPF
 
         public void DeleteStudent(int id)
         {
-            using (var context = new ApplicationDbContext())
+            using (var context = new ApplicationDbContext(CreateConnectionString()))
             {
                 var studentToDelete = context.Students.Find(id);
                 context.Students.Remove(studentToDelete);
@@ -50,7 +70,7 @@ namespace StudentDiaryWPF
             var student = studentWrapper.ToDao();
             var ratings = studentWrapper.ToRatingDao();
 
-            using (var context = new ApplicationDbContext())
+            using (var context = new ApplicationDbContext(CreateConnectionString()))
             {
                 var dbStudent = context.Students.Add(student);
 
@@ -95,7 +115,7 @@ namespace StudentDiaryWPF
             var student = studentWrapper.ToDao();
             var ratings = studentWrapper.ToRatingDao();
 
-            using (var context = new ApplicationDbContext())
+            using (var context = new ApplicationDbContext(CreateConnectionString()))
             {
                 UpdateStudentProperties(student, context);
 
@@ -125,5 +145,18 @@ namespace StudentDiaryWPF
         {
              return context.Ratings.Where(x => x.StudentId == student.Id).ToList();
         }
+
+        public string CreateConnectionString()
+        {
+            string dbServerAddress = Properties.Settings.Default.dbServerAddress;
+            string dbServerName = Properties.Settings.Default.dbServerName;
+            string dbName = Properties.Settings.Default.dbName;
+            string dbUserName = Properties.Settings.Default.dbUserName;
+            string dbPassWord = Properties.Settings.Default.dbPassWord;
+
+            //"Server=(local)\SQLEXPRESS;Database=StudentDiaryWPF;User Id=studentsAdmin;Password=12345;"
+            return $"Server={dbServerAddress}\\{dbServerName};Database={dbName};User Id={dbUserName};Password={dbPassWord};";           
+        }
+
     }
 }
